@@ -1,0 +1,301 @@
+definitions:
+  model.OfMovie:
+    properties:
+      director:
+        description: 影视导演
+        type: string
+      duration:
+        description: 片长
+        type: integer
+      id:
+        description: 影视身份标识
+        type: integer
+      lead_role:
+        description: 影视主演
+        type: string
+      name:
+        description: 影视名字
+        type: string
+      picture:
+        description: 影视的图片
+        type: string
+      produce_where:
+        description: 制片国家/地区
+        type: string
+      release_time:
+        description: 上映日期
+        type: string
+      score:
+        description: 电影评分
+        type: integer
+    type: object
+  tool.JsonFormat1:
+    properties:
+      data: {}
+      err:
+        type: string
+      status:
+        type: integer
+    type: object
+  tool.JsonFormat2:
+    properties:
+      err:
+        type: string
+      status:
+        type: integer
+    type: object
+host: localhost:8084
+info:
+  contact: {}
+  description: 期末作业
+  termsOfService: https://github.com/winter-homework-in-redrock/douban.git
+  title: 豆瓣作业
+  version: "1.1"
+paths:
+  /rank:
+    get:
+      parameters:
+      - description: 分类排行榜标签
+        in: query
+        name: type_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/model.OfMovie'
+            type: array
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      security:
+      - CoreAPI: []
+      summary: 获取电影排行榜数据
+  /token:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 手机号,11位数字
+        in: formData
+        name: phone
+        required: true
+        type: string
+      - description: 密码,8到16位数字大小写字母组合
+        in: formData
+        maxLength: 16
+        minLength: 8
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 请求错误
+          schema:
+            $ref: '#/definitions/tool.JsonFormat2'
+      summary: 获取token
+  /type:
+    get:
+      parameters:
+      - description: 电影形式
+        in: query
+        maxLength: 10
+        minLength: 2
+        name: form
+        type: string
+      - description: 电影种类
+        in: query
+        maxLength: 10
+        minLength: 2
+        name: kind
+        type: string
+      - description: 制片地区/国家
+        in: query
+        maxLength: 10
+        minLength: 2
+        name: place
+        type: string
+      - description: 上映年代
+        in: query
+        maxLength: 4
+        minLength: 4
+        name: age
+        type: string
+      - description: 特色
+        in: query
+        maxLength: 10
+        minLength: 2
+        name: special
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/model.OfMovie'
+            type: array
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      security:
+      - CoreAPI: []
+      summary: 获取分类电影数据
+  /user/loginByPwd:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 手机号
+        in: formData
+        name: phone
+        required: true
+        type: string
+      - description: 密码
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          headers:
+            Token:
+              description: token
+              type: string
+          schema:
+            type: string
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 登录
+  /user/movie/{label}:
+    get:
+      parameters:
+      - default: '"1"'
+        description: 想看的标签为0,看过的标签为1
+        in: path
+        name: label
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/model.OfMovie'
+            type: array
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 获取用户想看或看过的电影
+  /user/randCode:
+    get:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 手机号
+        in: query
+        maxLength: 11
+        minLength: 11
+        name: phone
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: integer
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 获取网站随机验证码
+  /user/registerOrLoginByPhone:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: 忘记密码时的问题答案
+        in: formData
+        name: answer
+        type: string
+      - in: formData
+        name: password
+        type: string
+      - description: 用户绑定的手机号码（唯一）
+        in: formData
+        name: phone
+        type: string
+      - description: 忘记密码时回答的问题
+        in: formData
+        name: question
+        type: string
+      - in: formData
+        name: user_id
+        type: string
+      - in: formData
+        name: user_name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 成功
+          headers:
+            Token:
+              description: token
+              type: string
+          schema:
+            type: string
+        "400":
+          description: 请求错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 注册用户，如果已经注册过，则会切换至登录
+securityDefinitions:
+  CoreAPI:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

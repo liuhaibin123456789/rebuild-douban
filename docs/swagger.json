@@ -1,0 +1,453 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "期末作业",
+        "title": "豆瓣作业",
+        "termsOfService": "https://github.com/winter-homework-in-redrock/douban.git",
+        "contact": {},
+        "version": "1.1"
+    },
+    "host": "localhost:8084",
+    "paths": {
+        "/rank": {
+            "get": {
+                "security": [
+                    {
+                        "CoreAPI": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取电影排行榜数据",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "分类排行榜标签",
+                        "name": "type_name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.OfMovie"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/token": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "手机号,11位数字",
+                        "name": "phone",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "maxLength": 16,
+                        "minLength": 8,
+                        "type": "string",
+                        "description": "密码,8到16位数字大小写字母组合",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "请求错误",
+                        "schema": {
+                            "$ref": "#/definitions/tool.JsonFormat2"
+                        }
+                    }
+                }
+            }
+        },
+        "/type": {
+            "get": {
+                "security": [
+                    {
+                        "CoreAPI": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取分类电影数据",
+                "parameters": [
+                    {
+                        "maxLength": 10,
+                        "minLength": 2,
+                        "type": "string",
+                        "description": "电影形式",
+                        "name": "form",
+                        "in": "query"
+                    },
+                    {
+                        "maxLength": 10,
+                        "minLength": 2,
+                        "type": "string",
+                        "description": "电影种类",
+                        "name": "kind",
+                        "in": "query"
+                    },
+                    {
+                        "maxLength": 10,
+                        "minLength": 2,
+                        "type": "string",
+                        "description": "制片地区/国家",
+                        "name": "place",
+                        "in": "query"
+                    },
+                    {
+                        "maxLength": 4,
+                        "minLength": 4,
+                        "type": "string",
+                        "description": "上映年代",
+                        "name": "age",
+                        "in": "query"
+                    },
+                    {
+                        "maxLength": 10,
+                        "minLength": 2,
+                        "type": "string",
+                        "description": "特色",
+                        "name": "special",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.OfMovie"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/loginByPwd": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "登录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "phone",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "Token": {
+                                "type": "string",
+                                "description": "token"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/movie/{label}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取用户想看或看过的电影",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "\"1\"",
+                        "description": "想看的标签为0,看过的标签为1",
+                        "name": "label",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.OfMovie"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/randCode": {
+            "get": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取网站随机验证码",
+                "parameters": [
+                    {
+                        "maxLength": 11,
+                        "minLength": 11,
+                        "type": "string",
+                        "description": "手机号",
+                        "name": "phone",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/registerOrLoginByPhone": {
+            "post": {
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "注册用户，如果已经注册过，则会切换至登录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "忘记密码时的问题答案",
+                        "name": "answer",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户绑定的手机号码（唯一）",
+                        "name": "phone",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "忘记密码时回答的问题",
+                        "name": "question",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "user_id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "user_name",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "Token": {
+                                "type": "string",
+                                "description": "token"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "请求错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.OfMovie": {
+            "type": "object",
+            "properties": {
+                "director": {
+                    "description": "影视导演",
+                    "type": "string"
+                },
+                "duration": {
+                    "description": "片长",
+                    "type": "integer"
+                },
+                "id": {
+                    "description": "影视身份标识",
+                    "type": "integer"
+                },
+                "lead_role": {
+                    "description": "影视主演",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "影视名字",
+                    "type": "string"
+                },
+                "picture": {
+                    "description": "影视的图片",
+                    "type": "string"
+                },
+                "produce_where": {
+                    "description": "制片国家/地区",
+                    "type": "string"
+                },
+                "release_time": {
+                    "description": "上映日期",
+                    "type": "string"
+                },
+                "score": {
+                    "description": "电影评分",
+                    "type": "integer"
+                }
+            }
+        },
+        "tool.JsonFormat1": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "err": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        },
+        "tool.JsonFormat2": {
+            "type": "object",
+            "properties": {
+                "err": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "CoreAPI": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
