@@ -24,17 +24,8 @@ import (
 func LoginByPwd(c *gin.Context) {
 	phone := c.PostForm("phone")
 	pwd := c.PostForm("password")
-	fmt.Println(":", phone, "\n", pwd)
-	err := service.LoginByPwd(phone, pwd)
-	if err != nil {
-		c.JSON(200, gin.H{
-			"status": "0",
-			"error":  fmt.Sprintf("%s", err),
-		})
-		return
-	}
-	//获取token
-	token, err := tool.CreateToken(phone)
+
+	token, err := service.LoginByPwd(phone, pwd)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"status": "0",
@@ -63,30 +54,18 @@ func LoginByPwd(c *gin.Context) {
 func Register(c *gin.Context) {
 	var u model.User
 	err := c.ShouldBind(&u)
-	log.Println(u)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"status": "0",
-			"error":  fmt.Sprintf("%s", err),
+			"error":  err,
 		})
 		return
 	}
-	err = service.Register(u)
+	token, err := service.Register(u)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"status": "0",
-			"error":  fmt.Sprintf("%s", err),
-			"token":  "",
-		})
-		return
-	}
-
-	var tokenString string
-	tokenString, err = tool.CreateToken(u.Phone)
-	if err != nil {
-		c.JSON(200, gin.H{
-			"status": "0",
-			"error":  fmt.Sprintf("%s", err),
+			"error":  fmt.Sprintf(err.Error()),
 			"token":  "",
 		})
 		return
@@ -94,14 +73,14 @@ func Register(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"status": "1",
 		"error":  "",
-		"token":  tokenString,
+		"token":  token,
 	})
 }
 
 //CreateIntroduction 创建用户介绍
 func CreateIntroduction(c *gin.Context) {
-	phone, exists := c.Get("phone")
-	if !exists {
+	phone := c.GetString("phone")
+	if phone == "" {
 		c.JSON(200, gin.H{
 			"status": "0",
 			"error":  "failed to get the 'phone' in the gin context,please check the JWTMiddleware in the application",
@@ -109,7 +88,7 @@ func CreateIntroduction(c *gin.Context) {
 		return
 	}
 	userIntroduction := c.PostForm("user_introduction")
-	err := service.CreateIntroduction(phone.(string), userIntroduction)
+	err := service.CreateIntroduction(phone, userIntroduction)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"status": "0",
@@ -131,8 +110,8 @@ func CreateIntroduction(c *gin.Context) {
 // @success  200       {object}  tool.JsonFormat1  "成功"
 // @failure  200       {object}  tool.JsonFormat1  "请求错误"
 func CreateSign(c *gin.Context) {
-	phone, exists := c.Get("phone")
-	if !exists {
+	phone := c.GetString("phone")
+	if phone == "" {
 		c.JSON(200, gin.H{
 			"status": "0",
 			"error":  "failed to get the 'phone' in the gin context,please check the JWTMiddleware in the application",
@@ -140,7 +119,7 @@ func CreateSign(c *gin.Context) {
 		return
 	}
 	sign := c.PostForm("user_sign")
-	err := service.CreateSign(phone.(string), sign)
+	err := service.CreateSign(phone, sign)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"status": "0",
@@ -157,8 +136,8 @@ func CreateSign(c *gin.Context) {
 //UploadUserAvatar 上传用户头像
 func UploadUserAvatar(c *gin.Context) {
 	//从上下文中获取用户标识
-	phone, exists := c.Get("phone")
-	if !exists {
+	phone := c.GetString("phone")
+	if phone == "" {
 		c.JSON(200, gin.H{
 			"status": "0",
 			"error":  "failed to get the 'phone' in the gin context,please check the JWTMiddleware in the application",
@@ -187,7 +166,7 @@ func UploadUserAvatar(c *gin.Context) {
 		return
 	}
 	//保存图像名
-	err = service.UploadUserAvatar(phone.(string), fileHeader.Filename)
+	err = service.UploadUserAvatar(phone, fileHeader.Filename)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"status": "0",

@@ -26,7 +26,7 @@ func URL() {
 	usGroup.Use(middleware.Cors())
 	{
 		usGroup.POST("loginByPwd", controller.LoginByPwd)                                           //密码登录
-		usGroup.POST("registerOrLoginByPhone", controller.Register)                                 //注册/登录
+		usGroup.POST("registerOrLoginByPhone", controller.Register)                                 //注册\登录
 		usGroup.POST("introduction", middleware.JWTAuthMiddleware(), controller.CreateIntroduction) //自我介绍
 		usGroup.POST("sign", middleware.JWTAuthMiddleware(), controller.CreateSign)                 //签名
 		usGroup.POST("avatar", middleware.JWTAuthMiddleware(), controller.UploadUserAvatar)         //上传用户头像api

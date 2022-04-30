@@ -6,7 +6,7 @@ import (
 
 //User 保存注册用户隐私数据
 type User struct {
-	UserID   string `json:"user_id" form:"user_id" gorm:"primaryKey;autoIncrement"`
+	UserID   int32  `json:"user_id" form:"user_id" gorm:"primaryKey;autoIncrement"`
 	UserName string `json:"user_name" form:"user_name" gorm:"type:varchar(40);not null"`
 	Password string `json:"password" form:"password" gorm:"type:varchar(40);not null"`
 	Phone    string `json:"phone" form:"phone" gorm:"type:varchar(11);unique;not null"`    //用户绑定的手机号码（唯一）
@@ -20,7 +20,7 @@ func (User) TableName() string {
 
 //UserSide 保存注册用户非隐私数据
 type UserSide struct {
-	UserId           string `json:"user_id" form:"user_id" gorm:"primaryKey;autoIncrement"`                     //为对应用户隐私表主键ID
+	UserId           int32  `json:"user_id" form:"user_id" gorm:"primaryKey;autoIncrement"`                     //为对应用户隐私表主键ID
 	Phone            string `json:"phone" form:"phone" gorm:"type:varchar(11);unique;not null"`                 //当前登录用户的手机号
 	Avatar           string `json:"avatar" form:"avatar" gorm:"type:varchar(200);default:'默认头像.jpg'"`           //用户头像绝对路径
 	UserName         string `json:"user_name" form:"user_name" gorm:"type:varchar(40);not null"`                //用户的昵称,依据隐私表数据

@@ -30,22 +30,6 @@ func CreateTables() error {
 		}
 	}()
 
-	//用户隐私数据表
-	if !tx.Migrator().HasTable(&model.User{}) {
-		err := tx.AutoMigrate(&model.User{})
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
-	//用户非隐私数据表
-	if !tx.Migrator().HasTable(&model.UserSide{}) {
-		err := tx.AutoMigrate(&model.UserSide{})
-		if err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
 	//用户想看或看过的影视表
 	if !tx.Migrator().HasTable(&model.UserMovie{}) {
 		err := tx.AutoMigrate(&model.UserMovie{})

@@ -32,7 +32,11 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	err = tool.InitRedis()
+	//err = tool.InitRedis()
+	//if err != nil {
+	//	return
+	//}
+	err = tool.InitGrpcClient()
 	if err != nil {
 		return
 	}
