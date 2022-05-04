@@ -3,7 +3,6 @@ package middleware
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"strings"
 )
 
@@ -35,11 +34,8 @@ func Cors() gin.HandlerFunc {
 			c.Set("content-type", "application/json")                                                                                                                                                              // 设置返回格式是json
 		}
 		//放行所有OPTIONS方法
-		//if method == "OPTIONS" {
-		//    c.JSON(http.StatusOK, "Options Request!")
-		//}
 		if method == "OPTIONS" {
-			c.AbortWithStatus(http.StatusPaymentRequired)
+			c.AbortWithStatus(204)
 			return
 		}
 		// 处理请求
